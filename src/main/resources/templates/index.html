@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar Empleados</title>
+</head>
+<body>
+<!--
+  Vista base del listado (issue #4). Braulio la completa en el issue #5 e Iván le da estilo en el #7.
+  Contrato con el controlador:
+    - ${empleados}: lista de Empleado (id, nombre, salario)
+    - ${mensaje} / ${error}: mensajes flash opcionales
+    - Eliminar seleccionados: POST /empleados/eliminar-multiple con un parámetro "ids" por casilla marcada
+    - Eliminar uno: POST /empleados/{id}/eliminar
+    - Editar: GET /empleados/{id}/editar · Nuevo: GET /empleados/nuevo
+-->
+<h1>Administrar Empleados</h1>
+
+<p th:if="${mensaje}" th:text="${mensaje}"></p>
+<p th:if="${error}" th:text="${error}"></p>
+
+<!-- Las casillas de la tabla se asocian a este formulario con el atributo form="form-eliminar",
+     porque HTML no permite anidar los formularios de eliminar de cada fila dentro de él. -->
+<form id="form-eliminar" th:action="@{/empleados/eliminar-multiple}" method="post">
+    <button type="submit">Eliminar</button>
+    <a th:href="@{/empleados/nuevo}">Agregar nuevo empleado</a>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Salario</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="empleado : ${empleados}">
+        <td><input type="checkbox" name="ids" th:value="${empleado.id}" form="form-eliminar"></td>
+        <td th:text="${empleado.id}"></td>
+        <td th:text="${empleado.nombre}"></td>
+        <td th:text="${empleado.salario}"></td>
+        <td>
+            <a th:href="@{/empleados/{id}/editar(id=${empleado.id})}">Editar</a>
+            <form th:action="@{/empleados/{id}/eliminar(id=${empleado.id})}" method="post" style="display:inline">
+                <button type="submit">Eliminar</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(empleados)}">
+        <td colspan="5">No hay empleados registrados.</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

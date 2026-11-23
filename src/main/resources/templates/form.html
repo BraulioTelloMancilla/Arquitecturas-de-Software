@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${empleado.id == null} ? 'Nuevo empleado' : 'Editar empleado'">Empleado</title>
+</head>
+<body>
+<!--
+  Vista base del formulario de alta y edición (issue #4). Braulio la completa en el issue #6.
+  Contrato con el controlador:
+    - ${empleado}: Empleado a crear (id null) o editar (id con valor)
+    - Crear: POST /empleados · Editar: POST /empleados/{id}
+    - Campos: nombre, salario. Los errores de validación se muestran con th:errors.
+-->
+<h1 th:text="${empleado.id == null} ? 'Nuevo empleado' : 'Editar empleado'"></h1>
+
+<form th:object="${empleado}" method="post"
+      th:action="${empleado.id == null} ? @{/empleados} : @{/empleados/{id}(id=${empleado.id})}">
+    <p>
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" th:field="*{nombre}" maxlength="100">
+        <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+    </p>
+    <p>
+        <label for="salario">Salario</label>
+        <input type="number" id="salario" th:field="*{salario}" step="0.01" min="0">
+        <span th:if="${#fields.hasErrors('salario')}" th:errors="*{salario}"></span>
+    </p>
+    <button type="submit">Guardar</button>
+    <a th:href="@{/}">Cancelar</a>
+</form>
+</body>
+</html>
